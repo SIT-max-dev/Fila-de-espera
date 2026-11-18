@@ -329,7 +329,6 @@
                 <div class="form-group">
                     <label for="password">Senha</label>
                     <div class="password-container">
-                        <!-- pattern e inputmode garantem o teclado numérico reduzido no tablet -->
                         <input type="password" id="password" inputmode="numeric" pattern="[0-9]*" required value="">
                         <button type="button" class="toggle-password" onclick="togglePasswordVisibility()" title="Mostrar/Esconder Senha">
                             <svg id="eye-icon" viewBox="0 0 24 24">
@@ -362,7 +361,6 @@
                 <form id="queue-form">
                     <div class="form-group">
                         <label for="people-input">Quantidade de Pessoas</label>
-                        <!-- inputmode="numeric" aciona apenas o teclado numérico no tablet -->
                         <input type="number" id="people-input" inputmode="numeric" pattern="[0-9]*" min="1" max="30" required value="">
                     </div>
                     <div class="form-group">
@@ -381,7 +379,8 @@
     </div>
 
     <script>
-        let queueData = [];
+        // Carrega dados salvos anteriormente no navegador (se houver)
+        let queueData = JSON.parse(localStorage.getItem('camponesa_fila')) || [];
 
         const loginScreen = document.getElementById('login-screen');
         const appScreen = document.getElementById('app-screen');
@@ -395,6 +394,11 @@
         const pagerInput = document.getElementById('pager-input');
         const queueError = document.getElementById('queue-error');
         const columnsContainer = document.getElementById('columns-container');
+
+        // Se já houver dados salvos, renderiza logo de início (caso já estivesse logado antes)
+        if (queueData.length > 0) {
+            renderQueue();
+        }
 
         function togglePasswordVisibility() {
             if (passwordInput.type === 'password') {
@@ -429,6 +433,7 @@
                 peopleInput.value = '';
                 pagerInput.value = '';
                 peopleInput.focus();
+                renderQueue(); // Garante que a fila salva apareça na tela
             } else {
                 loginError.style.display = 'block';
                 passwordInput.value = '';
@@ -446,6 +451,10 @@
                 <circle cx="12" cy="12" r="3"></circle>
             `;
             passwordInput.focus();
+        }
+
+        function salvarFila() {
+            localStorage.setItem('camponesa_fila', JSON.stringify(queueData));
         }
 
         queueForm.addEventListener('submit', (e) => {
@@ -468,8 +477,10 @@
                 id: Date.now(),
                 people: people,
                 pager: pager,
-                time: new Date()
+                time: new Date().getTime() // Salva o horário exato em milissegundos
             });
+
+            salvarFila(); // Salva automaticamente
 
             peopleInput.value = '';
             pagerInput.value = '';
@@ -480,6 +491,7 @@
 
         function releaseItem(id) {
             queueData = queueData.filter(item => item.id !== id);
+            salvarFila(); // Atualiza o salvamento
             queueError.style.display = 'none';
             renderQueue();
         }
@@ -509,7 +521,7 @@
                 const itemsOfSize = queueData.filter(item => item.people === size);
 
                 itemsOfSize.forEach(item => {
-                    const elapsedMinutes = Math.floor((new Date() - item.time) / 60000);
+                    const elapsedMinutes = Math.floor((new Date().getTime() - item.time) / 60000);
 
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'queue-item';
@@ -529,6 +541,7 @@
             });
         }
 
+        // Atualiza os minutos de espera a cada 30 segundos
         setInterval(() => {
             if (queueData.length > 0) renderQueue();
         }, 30000);

@@ -320,16 +320,16 @@
         <div class="login-card">
             <img src="logo.png" alt="Logo Camponesa">
             <h2>Fila de Espera</h2>
-            <div id="login-error" class="alert-msg">Senha incorreta!</div>
+            <div id="login-error" class="alert-msg">Senha incorreta! Digite 1234</div>
             <form id="login-form">
                 <div class="form-group">
                     <label for="username">Usuário</label>
                     <input type="text" id="username" value="Camponesa" readonly style="background-color: #e9ecef; cursor: not-allowed;">
                 </div>
                 <div class="form-group">
-                    <label for="password">Senha</label>
+                    <label for="password">Senha (Digite: 1234)</label>
                     <div class="password-container">
-                        <input type="password" id="password" inputmode="numeric" pattern="[0-9]*" required value="">
+                        <input type="password" id="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" required value="">
                         <button type="button" class="toggle-password" onclick="togglePasswordVisibility()" title="Mostrar/Esconder Senha">
                             <svg id="eye-icon" viewBox="0 0 24 24">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -379,7 +379,6 @@
     </div>
 
     <script>
-        // Carrega dados salvos anteriormente no navegador (se houver)
         let queueData = JSON.parse(localStorage.getItem('camponesa_fila')) || [];
 
         const loginScreen = document.getElementById('login-screen');
@@ -395,7 +394,6 @@
         const queueError = document.getElementById('queue-error');
         const columnsContainer = document.getElementById('columns-container');
 
-        // Se já houver dados salvos, renderiza logo de início (caso já estivesse logado antes)
         if (queueData.length > 0) {
             renderQueue();
         }
@@ -416,11 +414,12 @@
             }
         }
 
+        // Nova senha numérica padrão: 1234
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const senha = passwordInput.value.trim();
 
-            if (senha === 'camponesa123') {
+            if (senha === '1234') {
                 loginScreen.style.display = 'none';
                 appScreen.style.display = 'block';
                 loginError.style.display = 'none';
@@ -433,7 +432,7 @@
                 peopleInput.value = '';
                 pagerInput.value = '';
                 peopleInput.focus();
-                renderQueue(); // Garante que a fila salva apareça na tela
+                renderQueue();
             } else {
                 loginError.style.display = 'block';
                 passwordInput.value = '';
@@ -477,10 +476,10 @@
                 id: Date.now(),
                 people: people,
                 pager: pager,
-                time: new Date().getTime() // Salva o horário exato em milissegundos
+                time: new Date().getTime()
             });
 
-            salvarFila(); // Salva automaticamente
+            salvarFila();
 
             peopleInput.value = '';
             pagerInput.value = '';
@@ -491,7 +490,7 @@
 
         function releaseItem(id) {
             queueData = queueData.filter(item => item.id !== id);
-            salvarFila(); // Atualiza o salvamento
+            salvarFila();
             queueError.style.display = 'none';
             renderQueue();
         }
@@ -541,7 +540,6 @@
             });
         }
 
-        // Atualiza os minutos de espera a cada 30 segundos
         setInterval(() => {
             if (queueData.length > 0) renderQueue();
         }, 30000);

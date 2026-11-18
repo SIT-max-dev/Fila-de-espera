@@ -223,8 +223,8 @@
 <body>
 
     <header>
-        <!-- Logo embutida diretamente para nunca sumir -->
-        <img src="https://lh3.googleusercontent.com/a/ACg8ocL8i5v7F92k1V6J2Q" alt="Logo Camponesa" id="logo-img">
+        <!-- Carrega a logo diretamente da mesma pasta com o nome logo.png -->
+        <img src="logo.png" alt="Logo Camponesa" id="logo-img">
         <h1>Fila de Espera - Camponesa</h1>
     </header>
 
@@ -277,7 +277,7 @@
                 time: new Date()
             });
 
-            // Limpa os campos após adicionar
+            // Limpa os campos após adicionar e foca no primeiro
             peopleInput.value = '';
             pagerInput.value = '';
             peopleInput.focus();

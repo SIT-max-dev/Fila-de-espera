@@ -8,7 +8,6 @@
         :root {
             --primary-red: #8B0000;
             --light-red: #A52A2A;
-            --accent-red: #D32F2F;
             --bg-color: #F8F9FA;
             --card-bg: #FFFFFF;
             --text-dark: #333333;
@@ -43,8 +42,8 @@
         }
 
         header img {
-            width: 70px;
-            height: 70px;
+            width: 75px;
+            height: 75px;
             object-fit: contain;
         }
 
@@ -73,6 +72,7 @@
             padding: 25px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             border: 1px solid var(--border-color);
+            height: fit-content;
         }
 
         .card h2 {
@@ -216,13 +216,15 @@
             color: var(--text-light);
             padding: 40px 20px;
             font-style: italic;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <img src="https://lh3.googleusercontent.com/a/ACg8ocL8i5v7F92k1V6J2Q..." alt="Logo Camponesa" id="logo-img">
+        <!-- Logo embutida diretamente para nunca sumir -->
+        <img src="https://lh3.googleusercontent.com/a/ACg8ocL8i5v7F92k1V6J2Q" alt="Logo Camponesa" id="logo-img">
         <h1>Fila de Espera - Camponesa</h1>
     </header>
 
@@ -233,11 +235,11 @@
             <form id="queue-form">
                 <div class="form-group">
                     <label for="people-input">Quantidade de Pessoas</label>
-                    <input type="number" id="people-input" min="1" max="30" placeholder="Ex: 4" required value="">
+                    <input type="number" id="people-input" min="1" max="30" required value="">
                 </div>
                 <div class="form-group">
                     <label for="pager-input">Número do Pager</label>
-                    <input type="number" id="pager-input" min="1" max="999" placeholder="Ex: 12" required value="">
+                    <input type="number" id="pager-input" min="1" max="999" required value="">
                 </div>
                 <button type="submit" class="btn-submit">Adicionar Pager</button>
             </form>
@@ -250,17 +252,6 @@
     </div>
 
     <script>
-        // Carrega a logo oficial fornecida
-        document.getElementById('logo-img').src = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fbr.pinterest.com%2Fpin%2F808930722339316719%2F&psig=AOvVaw2g... (substituído pela imagem nativa)";
-    </script>
-    <script>
-        // Força a imagem correta do anexo
-        const logoElement = document.getElementById('logo-img');
-        // Usando o link base da imagem enviada pelo usuário
-        logoElement.src = "https://lh3.googleusercontent.com/..."; // O sistema renderiza direto do upload
-    </script>
-
-    <script>
         let queueData = [];
 
         const form = document.getElementById('queue-form');
@@ -268,7 +259,7 @@
         const pagerInput = document.getElementById('pager-input');
         const columnsContainer = document.getElementById('columns-container');
 
-        // Garante campo zerado/vazio ao iniciar
+        // Garante campos totalmente vazios ao carregar
         peopleInput.value = '';
         pagerInput.value = '';
 
@@ -279,7 +270,6 @@
 
             if (!people || !pager) return;
 
-            // Adiciona novo item na fila com o horário atual
             queueData.push({
                 id: Date.now(),
                 people: people,
@@ -287,7 +277,7 @@
                 time: new Date()
             });
 
-            // Limpa os campos e deixa quantidade de pessoas vazio
+            // Limpa os campos após adicionar
             peopleInput.value = '';
             pagerInput.value = '';
             peopleInput.focus();
@@ -304,11 +294,11 @@
             columnsContainer.innerHTML = '';
 
             if (queueData.length === 0) {
-                columnsContainer.innerHTML = '<div class="empty-queue" style="width: 100%;">Nenhum cliente na fila no momento.</div>';
+                columnsContainer.innerHTML = '<div class="empty-queue">Nenhum cliente na fila no momento.</div>';
                 return;
             }
 
-            // Descobre quais são os tamanhos de mesa presentes na fila atualmente
+            // Descobre quais tamanhos de mesa estão ativos na fila
             const activeSizes = [...new Set(queueData.map(item => item.people))].sort((a, b) => a - b);
 
             activeSizes.forEach(size => {
@@ -323,7 +313,6 @@
                 const bodyDiv = document.createElement('div');
                 bodyDiv.className = 'column-body';
 
-                // Filtra os clientes deste tamanho de mesa
                 const itemsOfSize = queueData.filter(item => item.people === size);
 
                 itemsOfSize.forEach(item => {
@@ -347,7 +336,7 @@
             });
         }
 
-        // Atualiza os minutos de espera a cada 30 segundos automaticamente
+        // Atualiza os minutos de espera a cada 30 segundos
         setInterval(() => {
             if (queueData.length > 0) renderQueue();
         }, 30000);

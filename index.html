@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Fila de Espera - Camponesa</title>
     <style>
         :root {
@@ -20,12 +20,13 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-dark);
-            padding: 20px;
+            padding: 15px;
         }
 
         /* Tela de Login */
@@ -33,38 +34,41 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 90vh;
+            height: 85vh;
         }
 
         .login-card {
             background-color: var(--card-bg);
-            padding: 40px;
+            padding: 30px;
             border-radius: 16px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 380px;
             border-top: 6px solid var(--primary-red);
             text-align: center;
         }
 
         .login-card img {
-            width: 90px;
-            height: 90px;
+            width: 80px;
+            height: 80px;
             object-fit: contain;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .login-card h2 {
             color: var(--primary-red);
-            margin-bottom: 25px;
-            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
         }
 
-        .login-error {
+        .alert-msg {
             color: #C62828;
             font-size: 0.9rem;
             margin-bottom: 15px;
             display: none;
+            background-color: #FFEBEE;
+            padding: 8px;
+            border-radius: 6px;
         }
 
         .password-container {
@@ -98,14 +102,9 @@
             stroke-width: 2;
             stroke-linecap: round;
             stroke-linejoin: round;
-            transition: stroke 0.2s;
         }
 
-        .toggle-password:hover svg {
-            stroke: var(--primary-red);
-        }
-
-        /* Sistema Principal (Escondido até logar) */
+        /* Sistema Principal */
         #app-screen {
             display: none;
         }
@@ -115,51 +114,48 @@
             align-items: center;
             justify-content: space-between;
             background-color: var(--card-bg);
-            padding: 15px 30px;
+            padding: 12px 20px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             border-bottom: 4px solid var(--primary-red);
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         header img {
-            width: 65px;
-            height: 65px;
+            width: 50px;
+            height: 50px;
             object-fit: contain;
         }
 
         header h1 {
             color: var(--primary-red);
-            font-size: 1.6rem;
+            font-size: 1.3rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .btn-logout {
             background-color: #757575;
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            transition: background 0.2s;
-        }
-
-        .btn-logout:hover {
-            background-color: #616161;
+            font-size: 0.9rem;
         }
 
         .main-container {
             display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 30px;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+            align-items: start;
         }
 
         @media (max-width: 900px) {
@@ -171,30 +167,30 @@
         .card {
             background-color: var(--card-bg);
             border-radius: 12px;
-            padding: 25px;
+            padding: 20px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             border: 1px solid var(--border-color);
-            height: fit-content;
         }
 
         .card h2 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--primary-red);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 2px solid #F1F1F1;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-align: left;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
             color: var(--text-dark);
+            font-size: 0.95rem;
         }
 
         .form-group input {
@@ -202,7 +198,7 @@
             padding: 12px;
             border: 2px solid var(--border-color);
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             outline: none;
             transition: border-color 0.2s;
         }
@@ -224,13 +220,13 @@
             transition: background 0.2s;
         }
 
-        .btn-submit:hover {
+        .btn-submit:active {
             background-color: var(--light-red);
         }
 
         .columns-container {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             overflow-x: auto;
             padding-bottom: 10px;
             align-items: flex-start;
@@ -239,63 +235,62 @@
         .table-column {
             background-color: var(--card-bg);
             border-radius: 12px;
-            min-width: 280px;
+            min-width: 260px;
             flex: 1;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            max-height: 75vh;
+            max-height: 70vh;
         }
 
         .column-header {
             background-color: var(--primary-red);
             color: white;
-            padding: 15px;
+            padding: 12px;
             border-top-left-radius: 12px;
             border-top-right-radius: 12px;
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
         }
 
         .column-body {
-            padding: 15px;
+            padding: 12px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .queue-item {
             background-color: #FFF5F5;
             border: 1px solid #FFCDD2;
             border-left: 5px solid var(--primary-red);
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
         .queue-info .pager-number {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: var(--primary-red);
         }
 
         .queue-info .people-count {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-light);
             margin-top: 2px;
         }
 
         .queue-info .timer {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #D32F2F;
             font-weight: 600;
-            margin-top: 4px;
+            margin-top: 2px;
         }
 
         .btn-release {
@@ -306,18 +301,13 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.9rem;
-            transition: background 0.2s;
-        }
-
-        .btn-release:hover {
-            background-color: #B71C1C;
+            font-size: 0.85rem;
         }
 
         .empty-queue {
             text-align: center;
             color: var(--text-light);
-            padding: 40px 20px;
+            padding: 30px 15px;
             font-style: italic;
             width: 100%;
         }
@@ -330,7 +320,7 @@
         <div class="login-card">
             <img src="logo.png" alt="Logo Camponesa">
             <h2>Fila de Espera</h2>
-            <div id="login-error" class="login-error">Senha incorreta!</div>
+            <div id="login-error" class="alert-msg">Senha incorreta!</div>
             <form id="login-form">
                 <div class="form-group">
                     <label for="username">Usuário</label>
@@ -339,9 +329,9 @@
                 <div class="form-group">
                     <label for="password">Senha</label>
                     <div class="password-container">
-                        <input type="password" id="password" required value="">
+                        <!-- pattern e inputmode garantem o teclado numérico reduzido no tablet -->
+                        <input type="password" id="password" inputmode="numeric" pattern="[0-9]*" required value="">
                         <button type="button" class="toggle-password" onclick="togglePasswordVisibility()" title="Mostrar/Esconder Senha">
-                            <!-- Ícone de Olho (SVG) -->
                             <svg id="eye-icon" viewBox="0 0 24 24">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                 <circle cx="12" cy="12" r="3"></circle>
@@ -368,14 +358,16 @@
             <!-- Formulário de Cadastro -->
             <div class="card">
                 <h2>Adicionar à Fila</h2>
+                <div id="queue-error" class="alert-msg">Este pager já está em uso na fila!</div>
                 <form id="queue-form">
                     <div class="form-group">
                         <label for="people-input">Quantidade de Pessoas</label>
-                        <input type="number" id="people-input" min="1" max="30" required value="">
+                        <!-- inputmode="numeric" aciona apenas o teclado numérico no tablet -->
+                        <input type="number" id="people-input" inputmode="numeric" pattern="[0-9]*" min="1" max="30" required value="">
                     </div>
                     <div class="form-group">
                         <label for="pager-input">Número do Pager</label>
-                        <input type="number" id="pager-input" min="1" max="999" required value="">
+                        <input type="number" id="pager-input" inputmode="numeric" pattern="[0-9]*" min="1" max="999" required value="">
                     </div>
                     <button type="submit" class="btn-submit">Adicionar Pager</button>
                 </form>
@@ -401,20 +393,18 @@
         const queueForm = document.getElementById('queue-form');
         const peopleInput = document.getElementById('people-input');
         const pagerInput = document.getElementById('pager-input');
+        const queueError = document.getElementById('queue-error');
         const columnsContainer = document.getElementById('columns-container');
 
-        // Função do olhinho SVG moderno para mostrar/esconder senha
         function togglePasswordVisibility() {
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                // Desenho do olho cortado (fechado)
                 eyeIcon.innerHTML = `
                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
                     <line x1="1" y1="1" x2="23" y2="23"></line>
                 `;
             } else {
                 passwordInput.type = 'password';
-                // Desenho do olho normal (aberto)
                 eyeIcon.innerHTML = `
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
@@ -422,7 +412,6 @@
             }
         }
 
-        // Lógica de Login (Senha fixa: camponesa123)
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const senha = passwordInput.value.trim();
@@ -459,13 +448,21 @@
             passwordInput.focus();
         }
 
-        // Adicionar item à fila
         queueForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const people = parseInt(peopleInput.value);
             const pager = pagerInput.value.trim();
 
             if (!people || !pager) return;
+
+            const pagerEmUso = queueData.some(item => item.pager === pager);
+            if (pagerEmUso) {
+                queueError.style.display = 'block';
+                pagerInput.focus();
+                return;
+            }
+
+            queueError.style.display = 'none';
 
             queueData.push({
                 id: Date.now(),
@@ -481,13 +478,12 @@
             renderQueue();
         });
 
-        // Liberar pager
         function releaseItem(id) {
             queueData = queueData.filter(item => item.id !== id);
+            queueError.style.display = 'none';
             renderQueue();
         }
 
-        // Renderizar colunas dinâmicas
         function renderQueue() {
             columnsContainer.innerHTML = '';
 
@@ -533,7 +529,6 @@
             });
         }
 
-        // Atualiza os minutos de espera a cada 30 segundos
         setInterval(() => {
             if (queueData.length > 0) renderQueue();
         }, 30000);

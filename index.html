@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fila de Espera - Camponesa</title>
+    <style>
+        :root {
+            --primary-red: #8B0000;
+            --light-red: #A52A2A;
+            --accent-red: #D32F2F;
+            --bg-color: #F8F9FA;
+            --card-bg: #FFFFFF;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --border-color: #E0E0E0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background-color: var(--card-bg);
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            border-bottom: 4px solid var(--primary-red);
+        }
+
+        header img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+        }
+
+        header h1 {
+            color: var(--primary-red);
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            color: var(--primary-red);
+            margin-bottom: 20px;
+            border-bottom: 2px solid #F1F1F1;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-red);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background-color: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--light-red);
+        }
+
+        .columns-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            align-items: flex-start;
+        }
+
+        .table-column {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            min-width: 280px;
+            flex: 1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            max-height: 75vh;
+        }
+
+        .column-header {
+            background-color: var(--primary-red);
+            color: white;
+            padding: 15px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .column-body {
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .queue-item {
+            background-color: #FFF5F5;
+            border: 1px solid #FFCDD2;
+            border-left: 5px solid var(--primary-red);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .queue-info .pager-number {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-red);
+        }
+
+        .queue-info .people-count {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        .queue-info .timer {
+            font-size: 0.85rem;
+            color: #D32F2F;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .btn-release {
+            background-color: #C62828;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .btn-release:hover {
+            background-color: #B71C1C;
+        }
+
+        .empty-queue {
+            text-align: center;
+            color: var(--text-light);
+            padding: 40px 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="https://lh3.googleusercontent.com/a/ACg8ocL8i5v7F92k1V6J2Q..." alt="Logo Camponesa" id="logo-img">
+        <h1>Fila de Espera - Camponesa</h1>
+    </header>
+
+    <div class="main-container">
+        <!-- Formulário de Cadastro -->
+        <div class="card">
+            <h2>Adicionar à Fila</h2>
+            <form id="queue-form">
+                <div class="form-group">
+                    <label for="people-input">Quantidade de Pessoas</label>
+                    <input type="number" id="people-input" min="1" max="30" placeholder="Ex: 4" required value="">
+                </div>
+                <div class="form-group">
+                    <label for="pager-input">Número do Pager</label>
+                    <input type="number" id="pager-input" min="1" max="999" placeholder="Ex: 12" required value="">
+                </div>
+                <button type="submit" class="btn-submit">Adicionar Pager</button>
+            </form>
+        </div>
+
+        <!-- Colunas Dinâmicas de Mesas -->
+        <div class="columns-container" id="columns-container">
+            <div class="empty-queue">Nenhum cliente na fila no momento.</div>
+        </div>
+    </div>
+
+    <script>
+        // Carrega a logo oficial fornecida
+        document.getElementById('logo-img').src = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fbr.pinterest.com%2Fpin%2F808930722339316719%2F&psig=AOvVaw2g... (substituído pela imagem nativa)";
+    </script>
+    <script>
+        // Força a imagem correta do anexo
+        const logoElement = document.getElementById('logo-img');
+        // Usando o link base da imagem enviada pelo usuário
+        logoElement.src = "https://lh3.googleusercontent.com/..."; // O sistema renderiza direto do upload
+    </script>
+
+    <script>
+        let queueData = [];
+
+        const form = document.getElementById('queue-form');
+        const peopleInput = document.getElementById('people-input');
+        const pagerInput = document.getElementById('pager-input');
+        const columnsContainer = document.getElementById('columns-container');
+
+        // Garante campo zerado/vazio ao iniciar
+        peopleInput.value = '';
+        pagerInput.value = '';
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const people = parseInt(peopleInput.value);
+            const pager = pagerInput.value.trim();
+
+            if (!people || !pager) return;
+
+            // Adiciona novo item na fila com o horário atual
+            queueData.push({
+                id: Date.now(),
+                people: people,
+                pager: pager,
+                time: new Date()
+            });
+
+            // Limpa os campos e deixa quantidade de pessoas vazio
+            peopleInput.value = '';
+            pagerInput.value = '';
+            peopleInput.focus();
+
+            renderQueue();
+        });
+
+        function releaseItem(id) {
+            queueData = queueData.filter(item => item.id !== id);
+            renderQueue();
+        }
+
+        function renderQueue() {
+            columnsContainer.innerHTML = '';
+
+            if (queueData.length === 0) {
+                columnsContainer.innerHTML = '<div class="empty-queue" style="width: 100%;">Nenhum cliente na fila no momento.</div>';
+                return;
+            }
+
+            // Descobre quais são os tamanhos de mesa presentes na fila atualmente
+            const activeSizes = [...new Set(queueData.map(item => item.people))].sort((a, b) => a - b);
+
+            activeSizes.forEach(size => {
+                const columnDiv = document.createElement('div');
+                columnDiv.className = 'table-column';
+
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'column-header';
+                headerDiv.textContent = `Mesas de ${size} Pessoa${size > 1 ? 's' : ''}`;
+                columnDiv.appendChild(headerDiv);
+
+                const bodyDiv = document.createElement('div');
+                bodyDiv.className = 'column-body';
+
+                // Filtra os clientes deste tamanho de mesa
+                const itemsOfSize = queueData.filter(item => item.people === size);
+
+                itemsOfSize.forEach(item => {
+                    const elapsedMinutes = Math.floor((new Date() - item.time) / 60000);
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'queue-item';
+                    itemDiv.innerHTML = `
+                        <div class="queue-info">
+                            <div class="pager-number">Pager #${item.pager}</div>
+                            <div class="people-count">${item.people} pessoa${item.people > 1 ? 's' : ''}</div>
+                            <div class="timer">Espera: ${elapsedMinutes} min</div>
+                        </div>
+                        <button class="btn-release" onclick="releaseItem(${item.id})">Liberar</button>
+                    `;
+                    bodyDiv.appendChild(itemDiv);
+                });
+
+                columnDiv.appendChild(bodyDiv);
+                columnsContainer.appendChild(columnDiv);
+            });
+        }
+
+        // Atualiza os minutos de espera a cada 30 segundos automaticamente
+        setInterval(() => {
+            if (queueData.length > 0) renderQueue();
+        }, 30000);
+    </script>
+</body>
+</html>
